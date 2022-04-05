@@ -6,12 +6,7 @@ using System.Text;
 namespace DataAccess.Abstract
 {
     //Entities katmanındaki product classının DataAccess katmanındaki erişim Interfacesi  =DataAccessLayer(DAL)
-    public interface IProductDal
-    {
-        List<Product> GetAll();
-        void Add(Product product);
-        void Update(Product product);
-        void Delete(Product product);
-        List<Product> GetAllCategory(int categoryId);
+    public interface IProductDal:IEntityRepository<Product>
+    { 
     }
 }
