@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Business
+namespace Business.Concrete
 {
     //İş kodları bu katmanda yazılır.Örk Add işlemi çalışmadan önce kontrol edilmesi gereken hususlar var ise (şartlar) burada kodlanır.
     public class ProductManager : IProductService
@@ -41,7 +41,7 @@ namespace Business
 
         public IDataResult<List<Product>> GetAll()
         {
-            if (DateTime.Now.Hour==22)
+            if (DateTime.Now.Hour==12)
             {
                 return new  ErrorDataResult<List<Product>>(Messages.MaintenanceTime);
             }
