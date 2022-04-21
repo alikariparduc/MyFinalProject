@@ -23,6 +23,7 @@ namespace Business.Concrete
 
         public IResult Add(Product product)
         {
+
             if (product.ProductName.Length<2)
             {
                 
