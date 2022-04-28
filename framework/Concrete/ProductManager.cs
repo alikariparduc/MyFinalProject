@@ -13,8 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Autofac.Extras.DynamicProxy;
-using Autofac.Extensions.DependencyInjection;
 
 namespace Business.Concrete
 {
@@ -30,7 +28,7 @@ namespace Business.Concrete
         [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {
-            ////ValidationTool.Validate(new ProductValidator(), product);
+            //ValidationTool.Validate(new ProductValidator(), product);
             //var context = new ValidationContext<Product>(product);
             //ProductValidator productValidator = new ProductValidator();
             //var result = productValidator.Validate(context);
@@ -38,12 +36,12 @@ namespace Business.Concrete
             //{
             //    throw new ValidationException(result.Errors);
             //}
-            //if (product.ProductName.Length < 2)
+            //if (product.ProductName.Length<2)
             //{
-
+                
             //    return new ErrorResult(Messages.ProductNameInvalid);//Messages.ProductNameInvalid =>magic string
             //}
-            _productDal.Add(product);
+             _productDal.Add(product);
             //return new Result(true,"Ürün eklendi...");
             return new SuccessResult(Messages.ProductAdded);
 
