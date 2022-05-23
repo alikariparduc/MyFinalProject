@@ -11,5 +11,6 @@ namespace Business.Constants // Constants = Sabit // Projenin sabitlerini tutaca
         public static string ProductNameInvalid = "Ürün ismi geçersiz.";
         internal static string MaintenanceTime="Sistem Bakımda";
         internal static string ProductsListed="Ürünler Listelendi.";
+        internal static string ProductAddedError="Bir kategoride en fazla 10 ürün olabilir.";
     }
 }

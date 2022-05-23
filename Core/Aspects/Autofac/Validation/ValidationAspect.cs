@@ -15,6 +15,7 @@ namespace Core.Aspects.Autofac.Validation
     {
         private readonly Type _validatorType;
         public ValidationAspect(Type validatorType)
+            //defensive coding
         {
             if (!typeof(IValidator).IsAssignableFrom(validatorType))
             {
@@ -23,7 +24,7 @@ namespace Core.Aspects.Autofac.Validation
 
             _validatorType = validatorType;
         }
-        protected override void OnBefore(IInvocation invocation)
+        protected override void OnBefore(IInvocation invocation) // Doğrulama kodu olduğu için OnBefore yazıyoruz.Yani ekleme gerçekleşmeden önce doğrulama yapmalı.
         {
             var validator = (IValidator)Activator.CreateInstance(_validatorType);
             var entityType = _validatorType.BaseType.GetGenericArguments()[0];

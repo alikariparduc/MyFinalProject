@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using System.Text;
 using Autofac.Extras.DynamicProxy;
 using Autofac.Extensions.DependencyInjection;
+using Business.CCS;
+using System.Linq;
 
 namespace Business.Concrete
 {
@@ -22,14 +24,17 @@ namespace Business.Concrete
     public class ProductManager : IProductService
     {
         IProductDal _productDal;
-        public ProductManager(IProductDal productDal)
+        ILogger _logger;
+        public ProductManager(IProductDal productDal,ILogger logger)
         {
             _productDal = productDal;
+            _logger = logger;
         }
 
-        [ValidationAspect(typeof(ProductValidator))]
+       // [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {
+
             ////ValidationTool.Validate(new ProductValidator(), product);
             //var context = new ValidationContext<Product>(product);
             //ProductValidator productValidator = new ProductValidator();
@@ -43,9 +48,21 @@ namespace Business.Concrete
 
             //    return new ErrorResult(Messages.ProductNameInvalid);//Messages.ProductNameInvalid =>magic string
             //}
-            _productDal.Add(product);
-            //return new Result(true,"Ürün eklendi...");
-            return new SuccessResult(Messages.ProductAdded);
+
+            if (CheckIfProductCountOfCategoryCorrect(product.CategoryId).Success)//Kural uygunluğunu sağlıyorsa ekle.
+            {
+                _productDal.Add(product);
+                //return new Result(true,"Ürün eklendi...");
+                return new SuccessResult(Messages.ProductAdded);
+            }
+            return new ErrorResult(Messages.ProductAddedError);
+
+            
+            
+          
+
+
+          
 
         }
 
@@ -90,6 +107,20 @@ namespace Business.Concrete
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductDetails());
         }
 
-         
+        [ValidationAspect(typeof(ProductValidator))]
+        public IResult Update(Product product)
+        {
+            throw new NotImplementedException();
+        }
+
+        private IResult CheckIfProductCountOfCategoryCorrect(int categoryId)
+        {
+            var result = _productDal.GetAll(p => p.CategoryId == categoryId).Count;
+            if (result >= 10)
+            {
+                return new ErrorResult(Messages.ProductAddedError);
+            }
+            return new SuccessResult();
+        }
     }
 }

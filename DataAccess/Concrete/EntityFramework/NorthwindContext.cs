@@ -12,7 +12,7 @@ namespace DataAccess.Concrete.EntityFramework
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)//Proje hangi veritabanı ile ilişkili olduğunu belirteceğimiz yer.
         {
-            optionsBuilder.UseSqlServer(@"Server=Ali;DataBase=Northwind;Trusted_Connection=True");
+            optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;DataBase=Northwind;Trusted_Connection=True");
 
         }
         //Veritabanı ile classlarımızı ilişkilendiriyoruz.

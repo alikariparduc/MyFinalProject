@@ -18,6 +18,7 @@ namespace Business.Abstract
         IDataResult<List<Product>> GetByUnitPrice(decimal min, decimal max);//Fiyat aralığına göre listeleme filtre operasyon
         IDataResult<List<ProductDetailDto>> GetProductDetailDtos();
         IDataResult<Product> GetById(int productId);
+        IResult Update(Product product);
      
         
         
