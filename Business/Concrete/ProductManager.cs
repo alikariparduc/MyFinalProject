@@ -17,6 +17,7 @@ using Autofac.Extras.DynamicProxy;
 using Autofac.Extensions.DependencyInjection;
 using Business.CCS;
 using System.Linq;
+using Core.Utilities.Business;
 
 namespace Business.Concrete
 {
@@ -24,10 +25,12 @@ namespace Business.Concrete
     public class ProductManager : IProductService
     {
         IProductDal _productDal;
+        ICategoryService _categoryService; 
         ILogger _logger;
-        public ProductManager(IProductDal productDal,ILogger logger)
+        public ProductManager(IProductDal productDal,ILogger logger, ICategoryService categoryService)
         {
             _productDal = productDal;
+            _categoryService = categoryService; //15 kategori kontrolü için kullandık.Bir manager başka bir servise ait Dal(ICategoryDal gibi) kullanamaz.Servisini kullanabilir.
             _logger = logger;
         }
 
@@ -48,14 +51,30 @@ namespace Business.Concrete
 
             //    return new ErrorResult(Messages.ProductNameInvalid);//Messages.ProductNameInvalid =>magic string
             //}
+            IResult result=BusinessRules.Run(CheckIfCategoryCount(),CheckIfProductNameExists(product.ProductName),
+                CheckIfProductCountOfCategoryCorrect(product.CategoryId));
 
-            if (CheckIfProductCountOfCategoryCorrect(product.CategoryId).Success)//Kural uygunluğunu sağlıyorsa ekle.
+            if (result!=null)
             {
-                _productDal.Add(product);
-                //return new Result(true,"Ürün eklendi...");
-                return new SuccessResult(Messages.ProductAdded);
+                return result;
             }
-            return new ErrorResult(Messages.ProductAddedError);
+            _productDal.Add(product);
+            //return new Result(true,"Ürün eklendi...");
+            return new SuccessResult(Messages.ProductAdded);
+
+
+            //if (CheckIfProductNameExists(product.ProductName).Success)
+            //{
+            //    if (CheckIfProductCountOfCategoryCorrect(product.CategoryId).Success)//Kural uygunluğunu sağlıyorsa ekle.
+            //    {
+            //        _productDal.Add(product);
+            //        //return new Result(true,"Ürün eklendi...");
+            //        return new SuccessResult(Messages.ProductAdded);
+            //    }
+            //    return new ErrorResult(Messages.ProductAddedError);
+            //}
+           
+            //return new ErrorResult(Messages.ProductNameAlreadyExists);
 
             
             
@@ -119,6 +138,26 @@ namespace Business.Concrete
             if (result >= 10)
             {
                 return new ErrorResult(Messages.ProductAddedError);
+            }
+            return new SuccessResult();
+        }
+
+        private IResult CheckIfProductNameExists(string productName)
+        {
+            var result = _productDal.GetAll(p => p.ProductName == productName).Any();//Any varmı demek.Sorgu sonucunda dönen bir eleman var mı ? True and False
+            if (result==true)//True ise yani ürün var ise.
+            {
+                return new ErrorResult(Messages.ProductNameAlreadyExists);
+            }
+            return new SuccessResult();
+        }
+
+        private IResult CheckIfCategoryCount()
+        {
+            var result = _categoryService.GetAll();
+            if (result.Data.Count>15)
+            {
+                return new ErrorResult(Messages.CheckIfCategoryCountError);
             }
             return new SuccessResult();
         }
