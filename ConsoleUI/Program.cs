@@ -3,6 +3,7 @@ using System;
 using DataAccess.Concrete.InMemory;
 using DataAccess.Concrete.EntityFramework;
 using Business.Concrete;
+using Core.Entities.Concrete;
 
 namespace ConsoleUI
 {
@@ -14,10 +15,19 @@ namespace ConsoleUI
 
             //CategoryTest();
 
-            //ProductTest();
+            getclaimsTest();
 
+        }
 
-
+        private static void getclaimsTest()
+        {
+            UserManager userManager = new UserManager(new EfUserDal());
+            var resultUser = userManager.GetUser(8);
+            var result = userManager.GetClaims(resultUser);
+            foreach (var item in result)
+            {
+                Console.WriteLine(item.Name);
+            }
         }
 
         //private static void ProductTest()
@@ -35,7 +45,7 @@ namespace ConsoleUI
         //    {
         //        Console.WriteLine(result.Message);
         //    }
-           
+
         //}
 
         //private static void CategoryTest()

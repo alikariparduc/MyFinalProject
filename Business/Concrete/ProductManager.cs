@@ -18,6 +18,7 @@ using Autofac.Extensions.DependencyInjection;
 using Business.CCS;
 using System.Linq;
 using Core.Utilities.Business;
+using Business.BusinessAspects.Autofac;
 
 namespace Business.Concrete
 {
@@ -33,8 +34,8 @@ namespace Business.Concrete
             _categoryService = categoryService; //15 kategori kontrolü için kullandık.Bir manager başka bir servise ait Dal(ICategoryDal gibi) kullanamaz.Servisini kullanabilir.
             _logger = logger;
         }
-
-       // [ValidationAspect(typeof(ProductValidator))]
+        [SecuredOperation("product.add,admin")]
+       [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {
 
@@ -52,14 +53,15 @@ namespace Business.Concrete
             //    return new ErrorResult(Messages.ProductNameInvalid);//Messages.ProductNameInvalid =>magic string
             //}
             IResult result=BusinessRules.Run(CheckIfCategoryCount(),CheckIfProductNameExists(product.ProductName),
-                CheckIfProductCountOfCategoryCorrect(product.CategoryId));
+                CheckIfProductCountOfCategoryCorrect(product.CategoryId), CheckIfCategoryCount());
 
-            if (result!=null)
+            if (result != null)
             {
                 return result;
             }
+
             _productDal.Add(product);
-            //return new Result(true,"Ürün eklendi...");
+
             return new SuccessResult(Messages.ProductAdded);
 
 
@@ -73,15 +75,15 @@ namespace Business.Concrete
             //    }
             //    return new ErrorResult(Messages.ProductAddedError);
             //}
-           
+
             //return new ErrorResult(Messages.ProductNameAlreadyExists);
 
-            
-            
-          
 
 
-          
+
+
+
+
 
         }
 
