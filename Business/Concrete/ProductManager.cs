@@ -1,24 +1,20 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
+using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Performance;
+using Core.Aspects.Autofac.Trancation;
 using Core.Aspects.Autofac.Validation;
-using Core.CrossCuttingConcerns.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using Entities.DTOs;
-using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Autofac.Extras.DynamicProxy;
-using Autofac.Extensions.DependencyInjection;
-using Business.CCS;
 using System.Linq;
-using Core.Utilities.Business;
-using Business.BusinessAspects.Autofac;
 
 namespace Business.Concrete
 {
@@ -91,7 +87,7 @@ namespace Business.Concrete
         {
             return _productDal.Get(p => p.ProductId == productId);
         }
-
+        [CacheAspect]
         public IDataResult<List<Product>> GetAll()
         {
             if (DateTime.Now.Hour==12)
@@ -107,6 +103,8 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.CategoryId == id));
         }
 
+        [CacheAspect]
+        [PerformanceAspect(5)] // Metodun çalışması 5sn geçerse bizi bilgilendirecek.
         public IDataResult<Product> GetById(int productId)
         {
             return new SuccessDataResult<Product>(_productDal.Get(p => p.ProductId == productId));
@@ -163,5 +161,18 @@ namespace Business.Concrete
             }
             return new SuccessResult();
         }
+        [TransactionScopeAspect]
+
+        public IResult AddTransactionTest(Product product)
+        {
+            Add(product);
+            if (product.UnitPrice<10)
+            {
+                throw new Exception("Deneme");  // Deneme amaçlı anlamsız bir kural yazıldı.
+            }
+
+            Add(product);
+            return null;
+                }
     }
 }
