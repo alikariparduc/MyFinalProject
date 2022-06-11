@@ -40,7 +40,7 @@ namespace WebAPI
             services.AddControllers();
             //services.AddSingleton<IProductService, ProductManager>();//Biyerde IProductService isterse.Arka planda productManager oluýþtur ve onu ver. 
             //services.AddSingleton<IProductDal, EfProductDal>();
-          
+            services.AddCors();
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -70,7 +70,7 @@ namespace WebAPI
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseCors(builder=>builder.WithOrigins("http://localhost:58043").AllowAnyHeader());//BU adresten bir istek gelirse izin ver.
             app.UseHttpsRedirection();
 
             app.UseRouting();
