@@ -70,7 +70,7 @@ namespace WebAPI
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseCors(builder=>builder.WithOrigins("http://localhost:58043").AllowAnyHeader());//BU adresten bir istek gelirse izin ver.
+            app.UseCors(builder=>builder.WithOrigins("http://localhost:4200").AllowAnyHeader());//BU adresten bir istek gelirse izin ver.
             app.UseHttpsRedirection();
 
             app.UseRouting();
